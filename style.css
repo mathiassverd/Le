@@ -192,23 +192,21 @@ body {
 }
 
 .note-btn {
-  border: 1px solid var(--border);
-  background: #fbfaf3;
-  border-radius: 8px;
-  width: 34px;
-  height: 34px;
-  font-size: 1rem;
-  line-height: 1;
+  border: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: var(--text-muted);
   cursor: pointer;
-  opacity: 0.5;
   flex-shrink: 0;
   padding: 0;
 }
 
 .note-btn.has-note {
-  opacity: 1;
-  border-color: var(--olive);
-  background: #eef1de;
+  color: var(--olive-dark);
 }
 
 .meal-row input {
@@ -292,11 +290,6 @@ body {
 .history-range .range-label {
   font-weight: 700;
   color: var(--olive-dark);
-}
-
-.history-range .range-sub {
-  font-size: 0.8rem;
-  color: var(--text-muted);
 }
 
 .history-total {

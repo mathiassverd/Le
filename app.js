@@ -257,12 +257,7 @@
       rangeLabel.className = "range-label";
       rangeLabel.textContent = weekRangeLabel(monday);
 
-      var rangeSub = document.createElement("span");
-      rangeSub.className = "range-sub";
-      rangeSub.textContent = "Trykk for å åpne uken";
-
       rangeWrap.appendChild(rangeLabel);
-      rangeWrap.appendChild(rangeSub);
 
       var totalEl = document.createElement("span");
       totalEl.className = "history-total";
