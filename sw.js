@@ -1,4 +1,4 @@
-var CACHE_NAME = "kcal-tracker-v2";
+var CACHE_NAME = "kcal-tracker-v3";
 var ASSETS = [
   "./",
   "./index.html",
