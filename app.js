@@ -3,6 +3,7 @@
 
   var STORAGE_KEY = "kcal-tracker-data";
   var MEALS = ["frokost", "lunsj", "middag", "div"];
+  var MEAL_LABELS = { frokost: "Frokost", lunsj: "Lunsj", middag: "Middag", div: "Div" };
   var DAY_NAMES = ["Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"];
   var MONTH_SHORT = ["jan", "feb", "mar", "apr", "mai", "jun", "jul", "aug", "sep", "okt", "nov", "des"];
 
@@ -58,26 +59,29 @@
 
   var data = loadData();
 
+  // A meal value is either a plain number (legacy) or { kcal, note }.
+  function getMealEntry(entry, meal) {
+    var v = entry ? entry[meal] : undefined;
+    if (v === undefined || v === null) return { kcal: undefined, note: "" };
+    if (typeof v === "number") return { kcal: v, note: "" };
+    return { kcal: v.kcal, note: v.note || "" };
+  }
+
   function mealSum(entry) {
     if (!entry) return 0;
     var sum = 0;
     for (var i = 0; i < MEALS.length; i++) {
-      sum += Number(entry[MEALS[i]]) || 0;
+      sum += Number(getMealEntry(entry, MEALS[i]).kcal) || 0;
     }
     return sum;
   }
 
-  function setMealValue(dateKey, meal, rawValue) {
+  function writeMeal(dateKey, meal, kcal, note) {
     var entry = data[dateKey] || {};
-    if (rawValue === "" || rawValue === null || rawValue === undefined) {
+    if ((kcal === undefined || kcal === null) && !note) {
       delete entry[meal];
     } else {
-      var num = parseFloat(rawValue);
-      if (isNaN(num) || num < 0) {
-        delete entry[meal];
-      } else {
-        entry[meal] = num;
-      }
+      entry[meal] = { kcal: kcal, note: note || "" };
     }
     if (Object.keys(entry).length === 0) {
       delete data[dateKey];
@@ -85,6 +89,23 @@
       data[dateKey] = entry;
     }
     saveData();
+  }
+
+  function setMealValue(dateKey, meal, rawValue) {
+    var existing = getMealEntry(data[dateKey], meal);
+    var kcal;
+    if (rawValue === "" || rawValue === null || rawValue === undefined) {
+      kcal = undefined;
+    } else {
+      var num = parseFloat(rawValue);
+      kcal = (isNaN(num) || num < 0) ? undefined : num;
+    }
+    writeMeal(dateKey, meal, kcal, existing.note);
+  }
+
+  function setMealNote(dateKey, meal, noteValue) {
+    var existing = getMealEntry(data[dateKey], meal);
+    writeMeal(dateKey, meal, existing.kcal, noteValue.trim());
   }
 
   // ---------- state ----------
@@ -100,6 +121,40 @@
   var weekTotalEl = document.getElementById("week-total");
   var historyListEl = document.getElementById("history-list");
   var template = document.getElementById("day-card-template");
+  var noteModal = document.getElementById("note-modal");
+  var noteModalTitle = document.getElementById("note-modal-title");
+  var noteModalTextarea = document.getElementById("note-modal-textarea");
+  var noteModalSave = document.getElementById("note-modal-save");
+  var noteModalCancel = document.getElementById("note-modal-cancel");
+  var editingNote = null;
+
+  // ---------- note modal ----------
+  function openNoteModal(dateKey, meal, dayLabel, buttonEl) {
+    editingNote = { dateKey: dateKey, meal: meal, buttonEl: buttonEl };
+    noteModalTitle.textContent = MEAL_LABELS[meal] + " – " + dayLabel;
+    noteModalTextarea.value = getMealEntry(data[dateKey], meal).note;
+    noteModal.classList.remove("hidden");
+    noteModalTextarea.focus();
+  }
+
+  function closeNoteModal() {
+    noteModal.classList.add("hidden");
+    editingNote = null;
+  }
+
+  noteModalSave.addEventListener("click", function () {
+    if (!editingNote) return;
+    var note = noteModalTextarea.value;
+    setMealNote(editingNote.dateKey, editingNote.meal, note);
+    editingNote.buttonEl.classList.toggle("has-note", note.trim() !== "");
+    closeNoteModal();
+  });
+
+  noteModalCancel.addEventListener("click", closeNoteModal);
+
+  noteModal.addEventListener("click", function (event) {
+    if (event.target === noteModal) closeNoteModal();
+  });
 
   // ---------- rendering ----------
   function renderEditor() {
@@ -122,12 +177,13 @@
       node.querySelector(".day-date").textContent = formatShort(date);
 
       let sumEl = node.querySelector(".day-sum");
+      let dayLabel = DAY_NAMES[i] + " " + formatShort(date);
 
       let inputs = node.querySelectorAll("input[data-meal]");
       inputs.forEach(function (input) {
         let meal = input.getAttribute("data-meal");
-        let value = entry[meal];
-        input.value = (value === undefined || value === null) ? "" : value;
+        let mealEntry = getMealEntry(entry, meal);
+        input.value = (mealEntry.kcal === undefined) ? "" : mealEntry.kcal;
 
         input.addEventListener("input", function () {
           setMealValue(key, meal, input.value);
@@ -135,6 +191,16 @@
           var daySum = mealSum(updatedEntry);
           sumEl.textContent = daySum;
           updateWeekTotal();
+        });
+      });
+
+      let noteButtons = node.querySelectorAll(".note-btn[data-meal]");
+      noteButtons.forEach(function (btn) {
+        let meal = btn.getAttribute("data-meal");
+        let mealEntry = getMealEntry(entry, meal);
+        btn.classList.toggle("has-note", mealEntry.note.trim() !== "");
+        btn.addEventListener("click", function () {
+          openNoteModal(key, meal, dayLabel, btn);
         });
       });
 

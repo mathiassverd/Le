@@ -58,22 +58,26 @@
       <span class="day-date"></span>
     </div>
     <div class="meal-rows">
-      <label class="meal-row">
+      <div class="meal-row">
         <span class="meal-label">Frokost</span>
+        <button type="button" class="note-btn" data-meal="frokost" aria-label="Notat for frokost">📝</button>
         <input type="number" inputmode="numeric" min="0" step="1" placeholder="0" data-meal="frokost">
-      </label>
-      <label class="meal-row">
+      </div>
+      <div class="meal-row">
         <span class="meal-label">Lunsj</span>
+        <button type="button" class="note-btn" data-meal="lunsj" aria-label="Notat for lunsj">📝</button>
         <input type="number" inputmode="numeric" min="0" step="1" placeholder="0" data-meal="lunsj">
-      </label>
-      <label class="meal-row">
+      </div>
+      <div class="meal-row">
         <span class="meal-label">Middag</span>
+        <button type="button" class="note-btn" data-meal="middag" aria-label="Notat for middag">📝</button>
         <input type="number" inputmode="numeric" min="0" step="1" placeholder="0" data-meal="middag">
-      </label>
-      <label class="meal-row">
+      </div>
+      <div class="meal-row">
         <span class="meal-label">Div</span>
+        <button type="button" class="note-btn" data-meal="div" aria-label="Notat for div">📝</button>
         <input type="number" inputmode="numeric" min="0" step="1" placeholder="0" data-meal="div">
-      </label>
+      </div>
     </div>
     <div class="day-sum-row">
       <span>Sum</span>
@@ -81,6 +85,17 @@
     </div>
   </div>
 </template>
+
+<div id="note-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <h3 id="note-modal-title">Notat</h3>
+    <textarea id="note-modal-textarea" rows="4" placeholder="Hva spiste du?"></textarea>
+    <div class="modal-actions">
+      <button id="note-modal-cancel" class="modal-btn modal-btn-cancel" type="button">Avbryt</button>
+      <button id="note-modal-save" class="modal-btn modal-btn-save" type="button">Lagre</button>
+    </div>
+  </div>
+</div>
 
 <script src="app.js"></script>
 </body>
