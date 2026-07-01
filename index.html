@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Kaloriteller</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#556B2F">
+
+<!-- iOS "Add to Home Screen" support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kaloriteller">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="app-header">
+  <h1>🥗 Kaloriteller</h1>
+  <nav class="tabs">
+    <button id="tab-registrer" class="tab-btn active" type="button">Registrer</button>
+    <button id="tab-historikk" class="tab-btn" type="button">Historikk</button>
+  </nav>
+</header>
+
+<main id="view-registrer" class="view">
+  <div class="week-nav">
+    <button id="prev-week" class="nav-btn" type="button" aria-label="Forrige uke">‹</button>
+    <div class="week-label-wrap">
+      <span id="week-label" class="week-label"></span>
+      <button id="go-today" class="today-btn" type="button">I dag</button>
+    </div>
+    <button id="next-week" class="nav-btn" type="button" aria-label="Neste uke">›</button>
+  </div>
+
+  <div id="day-cards" class="day-cards"></div>
+
+  <div class="week-total-card">
+    <span>Sum for uken</span>
+    <strong id="week-total">0</strong>
+  </div>
+</main>
+
+<main id="view-historikk" class="view hidden">
+  <h2 class="section-title">Historikk per uke</h2>
+  <div id="history-list" class="history-list"></div>
+</main>
+
+<template id="day-card-template">
+  <div class="day-card">
+    <div class="day-card-header">
+      <span class="day-name"></span>
+      <span class="day-date"></span>
+    </div>
+    <div class="meal-rows">
+      <label class="meal-row">
+        <span class="meal-label">Frokost</span>
+        <input type="number" inputmode="numeric" min="0" step="1" placeholder="0" data-meal="frokost">
+      </label>
+      <label class="meal-row">
+        <span class="meal-label">Lunsj</span>
+        <input type="number" inputmode="numeric" min="0" step="1" placeholder="0" data-meal="lunsj">
+      </label>
+      <label class="meal-row">
+        <span class="meal-label">Middag</span>
+        <input type="number" inputmode="numeric" min="0" step="1" placeholder="0" data-meal="middag">
+      </label>
+      <label class="meal-row">
+        <span class="meal-label">Div</span>
+        <input type="number" inputmode="numeric" min="0" step="1" placeholder="0" data-meal="div">
+      </label>
+    </div>
+    <div class="day-sum-row">
+      <span>Sum</span>
+      <strong class="day-sum">0</strong>
+    </div>
+  </div>
+</template>
+
+<script src="app.js"></script>
+</body>
+</html>
